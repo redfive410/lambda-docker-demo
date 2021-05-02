@@ -10,8 +10,8 @@ export AWS_ACCESS_KEY_ID=[YOUR_AWSKEY]
 export AWS_SECRET_ACCESS_KEY=[YOUR_AWSSECRET]
 export AWS_SESSION_TOKEN=[YOUR_AWSSECRET]
 
-sudo docker build . -t lambda/python:3.9-alpine3.12
-sudo docker run -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN -p 9000:8080 lambda/python:3.9-alpine3.12
+sudo docker build . -t lambda/python:3.9-slim
+sudo docker run -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN -p 9000:8080 lambda/python:3.9-slim
 
 curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
 ```
