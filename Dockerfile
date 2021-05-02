@@ -1,28 +1,17 @@
 # Define global args
 ARG FUNCTION_DIR="/home/app/"
 ARG RUNTIME_VERSION="3.9"
-ARG DISTRO_VERSION="3.12"
 
 # Stage 1 - bundle base image + runtime
 # Grab a fresh copy of the image and install GCC
-FROM python:${RUNTIME_VERSION}-alpine${DISTRO_VERSION} AS python-alpine
-# Install GCC (Alpine uses musl but we compile and link dependencies with GCC)
-RUN apk add --no-cache \
-    libstdc++
+FROM python:${RUNTIME_VERSION}-slim AS python-slim
+# Install GCC
+RUN apt-get update \
+&& apt-get install gcc -y \
+&& apt-get clean
 
 # Stage 2 - build function and dependencies
-FROM python-alpine AS build-image
-# Install aws-lambda-cpp build dependencies
-RUN apk add --no-cache \
-    build-base \
-    libtool \
-    autoconf \
-    automake \
-    libexecinfo-dev \
-    make \
-    cmake \
-    libcurl
-# Include global args in this stage of the build
+FROM python-slim AS build-image
 ARG FUNCTION_DIR
 ARG RUNTIME_VERSION
 # Create function directory
@@ -39,7 +28,7 @@ RUN python${RUNTIME_VERSION} -m pip install awslambdaric --target ${FUNCTION_DIR
 
 # Stage 3 - final runtime image
 # Grab a fresh copy of the Python image
-FROM python-alpine
+FROM python-slim
 # Include global arg in this stage of the build
 ARG FUNCTION_DIR
 # Set working directory to function root directory
